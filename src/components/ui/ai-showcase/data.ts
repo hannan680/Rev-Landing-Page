@@ -8,7 +8,7 @@ export const showcaseItems: ShowcaseItem[] = [
       "Watch this AI turn leads into consultation bookings for cosmetic procedures. Handles sensitive questions about pricing and procedures with the perfect balance of professionalism and warmth.",
     industry: "Plastic Surgery Office",
     type: "outbound",
-    audioUrl: "/audio/Doctor.wav",
+    audioUrl: "/audio/Doctor.mp3",
     features: [
       "Consultation Booking",
       "Procedure Information",
@@ -28,7 +28,7 @@ export const showcaseItems: ShowcaseItem[] = [
       "Listen to this AI conduct professional legal intake calls, gathering case details and qualifying potential clients. Handles sensitive legal matters with appropriate discretion and empathy.",
     industry: "Law Office",
     type: "inbound",
-    audioUrl: "/audio/Lawyer.wav",
+    audioUrl: "/audio/Lawyer.mp3",
     features: [
       "Client Intake",
       "Case Qualification",
@@ -48,7 +48,7 @@ export const showcaseItems: ShowcaseItem[] = [
       "Our AI handles technical support calls for alarm system troubleshooting, monitoring center inquiries, and customer service. Provides instant responses to common issues while escalating complex matters to your technicians.",
     industry: "Alarm & Security Company",
     type: "support",
-    audioUrl: "https://ia600908.us.archive.org/6/items/tech_20250716/tech.wav",
+    audioUrl: "/audio/tech.mp3",
     features: [
       "System Diagnostics",
       "Alarm Troubleshooting",
