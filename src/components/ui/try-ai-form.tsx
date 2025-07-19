@@ -1,12 +1,18 @@
-
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Phone, Loader2 } from 'lucide-react';
+import { Phone, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface TryAIFormProps {
   open: boolean;
@@ -15,13 +21,14 @@ interface TryAIFormProps {
 
 export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    email: '',
-    company: ''
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    company: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,22 +37,20 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
 
     try {
       // Save form submission to Supabase
-      const { error } = await supabase
-        .from('form_submissions')
-        .insert({
-          first_name: formData.firstName,
-          last_name: formData.lastName || null,
-          phone: formData.phone,
-          email: formData.email,
-          company: formData.company || null
-        });
+      const { error } = await supabase.from("form_submissions").insert({
+        first_name: formData.firstName,
+        last_name: formData.lastName || null,
+        phone: formData.phone,
+        email: formData.email,
+        company: formData.company || null,
+      });
 
       if (error) {
         throw error;
       }
 
       // Send data to webhook
-      console.log('Sending data to webhook...');
+      console.log("Sending data to webhook...");
       try {
         const webhookData = {
           first_name: formData.firstName,
@@ -54,39 +59,53 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
           email: formData.email,
           company: formData.company,
           timestamp: new Date().toISOString(),
-          source: 'AI Demo Form'
+          source: "AI Demo Form",
         };
-        
-        console.log('Webhook payload:', webhookData);
-        
-        const webhookResponse = await fetch('https://services.leadconnectorhq.com/hooks/MDB4H4sAI71Jzos2up6b/webhook-trigger/8b489481-513b-4b6d-8081-14573202f3c0', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookData),
-        });
-        
-        console.log('Webhook response status:', webhookResponse.status);
-        console.log('Webhook sent successfully');
+
+        console.log("Webhook payload:", webhookData);
+
+        const webhookResponse = await fetch(
+          "https://services.leadconnectorhq.com/hooks/MDB4H4sAI71Jzos2up6b/webhook-trigger/8b489481-513b-4b6d-8081-14573202f3c0",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(webhookData),
+          }
+        );
+
+        console.log("Webhook response status:", webhookResponse.status);
+        console.log("Webhook sent successfully");
       } catch (webhookError) {
-        console.error('Webhook error:', webhookError);
+        console.error("Webhook error:", webhookError);
         // Don't fail the form submission if webhook fails
       }
 
-      toast({
-        title: "Demo Call Scheduled!",
-        description: "Our AI will call you within the next 5 minutes to demonstrate our capabilities."
+      // Close the dialog and redirect to thank you page
+      onOpenChange(false);
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+        company: "",
       });
 
-      onOpenChange(false);
-      setFormData({ firstName: '', lastName: '', phone: '', email: '', company: '' });
+      // Track conversion events on successful form submission
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "conversion", {
+          send_to: "AW-16840970681/eov3CNnZluwaELmjs94-",
+        });
+      }
+
+      navigate("/thank-you");
     } catch (error) {
-      console.error('Error saving form submission:', error);
+      console.error("Error saving form submission:", error);
       toast({
         title: "Error",
         description: "Failed to schedule demo call. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -94,49 +113,62 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
   };
 
   const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-[#20215A] border-[#00E5D6]/30 text-white max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#00E5D6] flex items-center gap-2" style={{
-            fontFamily: 'Audiowide, sans-serif'
-          }}>
+          <DialogTitle
+            className="text-2xl font-bold text-[#00E5D6] flex items-center gap-2"
+            style={{
+              fontFamily: "Audiowide, sans-serif",
+            }}
+          >
             <Phone className="w-6 h-6" />
             Try Our AI Agent
           </DialogTitle>
-          <DialogDescription className="text-[#D3D4FF]" style={{
-            fontFamily: 'Manrope, sans-serif'
-          }}>
-            Enter your details and our AI will call you within 5 minutes to demonstrate its capabilities.
+          <DialogDescription
+            className="text-[#D3D4FF]"
+            style={{
+              fontFamily: "Manrope, sans-serif",
+            }}
+          >
+            Enter your details and our AI will call you within 5 minutes to
+            demonstrate its capabilities.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="firstName" className="text-[#00E5D6] font-semibold">
+              <Label
+                htmlFor="firstName"
+                className="text-[#00E5D6] font-semibold"
+              >
                 First Name *
               </Label>
               <Input
                 id="firstName"
                 value={formData.firstName}
-                onChange={e => updateFormData('firstName', e.target.value)}
+                onChange={(e) => updateFormData("firstName", e.target.value)}
                 className="mt-1 bg-[#0D0D0D]/50 border-[#E536C1]/30 text-white placeholder-[#D3D4FF]/70"
                 placeholder="John"
                 required
               />
             </div>
             <div>
-              <Label htmlFor="lastName" className="text-[#00E5D6] font-semibold">
+              <Label
+                htmlFor="lastName"
+                className="text-[#00E5D6] font-semibold"
+              >
                 Last Name
               </Label>
               <Input
                 id="lastName"
                 value={formData.lastName}
-                onChange={e => updateFormData('lastName', e.target.value)}
+                onChange={(e) => updateFormData("lastName", e.target.value)}
                 className="mt-1 bg-[#0D0D0D]/50 border-[#E536C1]/30 text-white placeholder-[#D3D4FF]/70"
                 placeholder="Doe"
               />
@@ -150,7 +182,7 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
             <Input
               id="company"
               value={formData.company}
-              onChange={e => updateFormData('company', e.target.value)}
+              onChange={(e) => updateFormData("company", e.target.value)}
               className="mt-1 bg-[#0D0D0D]/50 border-[#E536C1]/30 text-white placeholder-[#D3D4FF]/70"
               placeholder="ABC Corp"
             />
@@ -164,7 +196,7 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
               id="phone"
               type="tel"
               value={formData.phone}
-              onChange={e => updateFormData('phone', e.target.value)}
+              onChange={(e) => updateFormData("phone", e.target.value)}
               className="mt-1 bg-[#0D0D0D]/50 border-[#E536C1]/30 text-white placeholder-[#D3D4FF]/70"
               placeholder="(555) 123-4567"
               required
@@ -179,7 +211,7 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
               id="email"
               type="email"
               value={formData.email}
-              onChange={e => updateFormData('email', e.target.value)}
+              onChange={(e) => updateFormData("email", e.target.value)}
               className="mt-1 bg-[#0D0D0D]/50 border-[#E536C1]/30 text-white placeholder-[#D3D4FF]/70"
               placeholder="john@company.com"
               required
@@ -200,7 +232,7 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
               disabled={isLoading}
               className="flex-1 bg-[#00E5D6] text-[#0D0D0D] hover:bg-[#00E5D6]/90 font-bold"
               style={{
-                fontFamily: 'Audiowide, sans-serif'
+                fontFamily: "Audiowide, sans-serif",
               }}
             >
               {isLoading ? (
@@ -209,7 +241,7 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
                   Scheduling...
                 </>
               ) : (
-                'Get AI Demo Call'
+                "Get AI Demo Call"
               )}
             </Button>
           </div>
