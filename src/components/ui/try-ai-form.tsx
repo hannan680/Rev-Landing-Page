@@ -106,7 +106,7 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
       if (typeof window !== "undefined" && window.gtag) {
         console.log("📊 Firing Google Analytics conversion event...");
         window.gtag("event", "conversion", {
-          send_to: "AW-16840970681/eov3CNnZluwaELmjs94-",
+          send_to: "AW-16840970681/eFOOCLGo3egaELmjs94-",
         });
         console.log("✅ Google Analytics conversion tracked!");
       } else {
