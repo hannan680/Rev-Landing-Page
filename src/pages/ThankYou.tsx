@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Phone, CheckCircle, Clock, ArrowLeft } from "lucide-react";
@@ -6,6 +6,17 @@ import { useNavigate } from "react-router-dom";
 
 const ThankYou = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      typeof window.fbq === "function" &&
+      !sessionStorage.getItem("fbq_lead_tracked")
+    ) {
+      window.fbq('track', 'Lead');
+      sessionStorage.setItem("fbq_lead_tracked", "true");
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-[#F5F5F5] flex items-center justify-center px-4">
