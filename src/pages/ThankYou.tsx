@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Phone, CheckCircle, Clock, ArrowLeft } from "lucide-react";
@@ -6,6 +6,13 @@ import { useNavigate } from "react-router-dom";
 
 const ThankYou = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Track Facebook Pixel Lead event when thank you page loads
+    if (typeof window !== "undefined" && (window as any).fbq) {
+      (window as any).fbq("track", "Lead");
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-[#F5F5F5] flex items-center justify-center px-4">

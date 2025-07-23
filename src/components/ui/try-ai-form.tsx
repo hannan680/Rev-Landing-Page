@@ -93,10 +93,33 @@ export function TryAIForm({ open, onOpenChange }: TryAIFormProps) {
       });
 
       // Track conversion events on successful form submission
+      console.log(
+        "🎯 CONVERSION TRACKING - Environment:",
+        window.location.hostname
+      );
+      console.log("🎯 CONVERSION TRACKING - User Agent:", navigator.userAgent);
+      console.log(
+        "🎯 CONVERSION TRACKING - Timestamp:",
+        new Date().toISOString()
+      );
+
       if (typeof window !== "undefined" && window.gtag) {
+        console.log("📊 Firing Google Analytics conversion event...");
         window.gtag("event", "conversion", {
           send_to: "AW-16840970681/eov3CNnZluwaELmjs94-",
         });
+        console.log("✅ Google Analytics conversion tracked!");
+      } else {
+        console.log("❌ Google Analytics (gtag) not found");
+      }
+
+      // Track Facebook Pixel conversion
+      if (typeof window !== "undefined" && window.fbq) {
+        console.log("📘 Firing Facebook Pixel conversion event...");
+        window.fbq("track", "Lead");
+        console.log("✅ Facebook Pixel conversion tracked!");
+      } else {
+        console.log("❌ Facebook Pixel (fbq) not found");
       }
 
       navigate("/thank-you");

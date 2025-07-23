@@ -17,6 +17,10 @@ const Index = () => {
   const [showCalendarDialog, setShowCalendarDialog] = useState(false);
 
   const handleBookDemo = () => {
+    // Track Facebook Pixel Lead event when book demo popup opens
+    if (typeof window !== "undefined" && (window as any).fbq) {
+      (window as any).fbq("track", "Lead");
+    }
     setShowCalendarDialog(true);
   };
 
